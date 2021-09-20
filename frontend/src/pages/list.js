@@ -1,10 +1,10 @@
-import { useHistory } from "react-router-dom";
-import { useSWRConfig } from "swr";
-import { createUser, deleteUser, useUsers } from "../hooks/useUsers";
+import {useHistory} from 'react-router-dom';
+import {useSWRConfig} from 'swr';
+import {createUser, deleteUser, useUsers} from '../hooks/useUsers';
 
 export default function ListPage() {
-  const { mutate } = useSWRConfig();
-  const { users, isLoading } = useUsers();
+  const {mutate} = useSWRConfig();
+  const {users, isLoading} = useUsers();
 
   const history = useHistory();
 
@@ -40,12 +40,14 @@ export default function ListPage() {
               <button
                 onClick={deleteUserFn.bind(user)}
                 className="float-right"
-              >Delete</button>
+              >Delete
+              </button>
 
               <button
                 onClick={goToDetailFn.bind(user)}
                 className="float-right mr-1"
-              >Edit</button>
+              >Edit
+              </button>
             </li>
           )
         })}

@@ -1,15 +1,15 @@
-import { useEffect, useState } from "react";
-import { useHistory, useParams } from "react-router-dom";
-import { useSWRConfig } from "swr";
-import { createUser, deleteUser, useUsers } from "../hooks/useUsers";
+import {useEffect, useState} from 'react';
+import {useHistory, useParams} from 'react-router-dom';
+import {useSWRConfig} from 'swr';
+import {createUser, deleteUser, useUsers} from '../hooks/useUsers';
 
 export default function DetailPage() {
-  const { mutate } = useSWRConfig();
-  const { users } = useUsers();
+  const {mutate} = useSWRConfig();
+  const {users} = useUsers();
 
-  const { userId } = useParams();
+  const {userId} = useParams();
   const history = useHistory();
-  const [user, setUser] = useState({ firstName: '', lastName: '', email: '' });
+  const [user, setUser] = useState({firstName: '', lastName: '', email: ''});
 
   useEffect(() => {
     const currentUser = users.find(user => user.id === userId);
@@ -44,7 +44,9 @@ export default function DetailPage() {
               id="firstName"
               type="text"
               value={user?.firstName}
-              onChange={(e) => {setUser({ ...user, firstName: e.target.value })}}
+              onChange={(e) => {
+                setUser({...user, firstName: e.target.value})
+              }}
             />
           </div>
 
@@ -54,7 +56,9 @@ export default function DetailPage() {
               id="lastName"
               type="text"
               value={user?.lastName}
-              onChange={(e) => {setUser({ ...user, lastName: e.target.value })}}
+              onChange={(e) => {
+                setUser({...user, lastName: e.target.value})
+              }}
             />
           </div>
 
@@ -64,7 +68,9 @@ export default function DetailPage() {
               id="email"
               type="text"
               value={user?.email}
-              onChange={(e) => {setUser({ ...user, email: e.target.value })}}
+              onChange={(e) => {
+                setUser({...user, email: e.target.value})
+              }}
             />
           </div>
         </form>
@@ -72,17 +78,20 @@ export default function DetailPage() {
         <button
           onClick={deleteUserFn}
           className="float-right"
-        >Delete</button>
+        >Delete
+        </button>
 
         <button
           onClick={updateUserFn}
           className="float-right mr-1"
-        >Update</button>
+        >Update
+        </button>
 
         <button
           onClick={goToListFn}
           className="float-right mr-1"
-        >Cancel</button>
+        >Cancel
+        </button>
       </div>
     </div>
   );

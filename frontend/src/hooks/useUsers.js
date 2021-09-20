@@ -13,7 +13,7 @@ const fetcher = async (...args) => {
 }
 
 export function useUsers() {
-  const { data, error } = useSWR(`http://localhost:3000/users`, fetcher)
+  const {data, error} = useSWR(`http://localhost:3000/users`, fetcher)
 
   return {
     users: data?.Items || [],
