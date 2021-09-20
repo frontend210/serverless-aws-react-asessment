@@ -2,8 +2,6 @@ const AWS = require("aws-sdk");
 const express = require("express");
 const serverless = require("serverless-http");
 
-const AWSMock = require('aws-sdk-mock');
-
 const app = express();
 
 const USERS_TABLE = process.env.USERS_TABLE;
@@ -18,49 +16,74 @@ const dynamoDbClient = new AWS.DynamoDB.DocumentClient(dynamoDbClientParams);
 
 app.use(express.json());
 
-app.get("/users/:userId", async function (req, res) {
+app.get("/users", async function (req, res) {
+  const params = {
+    TableName: USERS_TABLE
+  };
+
+  try {
+    const { Items, Count, ScannedCount }= await dynamoDbClient.scan(params).promise();
+    res.json({ Items, Count, ScannedCount });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Could not retreive all users" });
+  }
+});
+
+app.get("/users/:id", async function (req, res) {
   const params = {
     TableName: USERS_TABLE,
     Key: {
-      userId: req.params.userId,
+      id: req.params.id,
     },
   };
 
   try {
-    const { Item } = await dynamoDbClient.scan(params).promise();
-    if (Item) {
-      const { userId, name } = Item;
-      res.json({ userId, name });
-    } else {
-      res
-        .status(404)
-        .json({ error: 'Could not find user with provided "userId"' });
-    }
+    const { Items, Count, ScannedCount }= await dynamoDbClient.scan(params).promise();
+    res.json({ Items, Count, ScannedCount });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ error: "Could not retreive user" });
+    res.status(500).json({ error: "Could not retreive the user" });
+  }
+});
+
+app.delete("/users/:id", async function (req, res) {
+  const params = {
+    TableName: USERS_TABLE,
+    Key: {
+      id: req.params.id,
+    },
+  };
+
+  try {
+    await dynamoDbClient.delete(params).promise();
+    res.status(200).send();
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Could not delete the user" });
   }
 });
 
 app.post("/users", async function (req, res) {
-  const { userId, name } = req.body;
-  if (typeof userId !== "string") {
-    res.status(400).json({ error: '"userId" must be a string' });
-  } else if (typeof name !== "string") {
-    res.status(400).json({ error: '"name" must be a string' });
+  const { id, firstName, lastName, email } = req.body;
+  if (typeof id !== "string") {
+    res.status(400).json({ error: '"id" must be a string' });
+  } else if (typeof firstName !== "string") {
+    res.status(400).json({ error: '"firstName" must be a string' });
+  } else if (typeof lastName !== "string") {
+    res.status(400).json({ error: '"lastName" must be a string' });
+  } else if (typeof email !== "string") {
+    res.status(400).json({ error: '"email" must be a string' });
   }
 
   const params = {
     TableName: USERS_TABLE,
-    Item: {
-      userId: userId,
-      name: name,
-    },
+    Item: { id, firstName, lastName, email },
   };
 
   try {
     await dynamoDbClient.put(params).promise();
-    res.json({ userId, name });
+    res.json({ id, firstName, lastName, email });
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: "Could not create user" });
@@ -75,3 +98,4 @@ app.use((req, res, next) => {
 
 
 module.exports.handler = serverless(app);
+module.exports.app = app;
