@@ -1,20 +1,34 @@
-import {useSWRConfig} from "swr";
-import {createUser, deleteUser, useUsers} from "../hooks/useUsers";
+import { useHistory } from "react-router-dom";
+import { useSWRConfig } from "swr";
+import { createUser, deleteUser, useUsers } from "../hooks/useUsers";
 
 export default function ListPage() {
-  const { mutate } = useSWRConfig()
-  const { users, isLoading } = useUsers()
+  const { mutate } = useSWRConfig();
+  const { users, isLoading } = useUsers();
 
-  if (isLoading) return <span>loading ...</span>
+  const history = useHistory();
+
+  function goToDetailFn() {
+    history.push(`/edit/${this.id}`);
+  }
+
+  const createUserFn = async () => {
+    await createUser(null, 'Ke1', 'Li1', 'sr.frontenddev210@gmail.com');
+    mutate('http://localhost:3000/users');
+  };
+
+  async function deleteUserFn() {
+    await deleteUser(this.id);
+    mutate('http://localhost:3000/users');
+  }
+
+  if (isLoading) return <span>loading ...</span>;
+
   return (
     <div className="App-content">
       <div>
         <h2>{users.length} Users found</h2>
-        <button onClick={async () => {
-          // TODO: create a separate page for create, update
-          await createUser('Ke1', 'Li1', 'sr.frontenddev210@gmail.com')
-          mutate('http://localhost:3000/users')
-        }}>Add new user</button>
+        <button onClick={createUserFn}>Add new user</button>
       </div>
 
       <ol>
@@ -24,18 +38,12 @@ export default function ListPage() {
               <span>{user.firstName} {user.lastName}, {user.email}</span>
 
               <button
-                onClick={async () => {
-                  await deleteUser(user.id)
-                  mutate('http://localhost:3000/users')
-                }}
+                onClick={deleteUserFn.bind(user)}
                 className="float-right"
               >Delete</button>
 
               <button
-                onClick={async () => {
-                  await createUser(user.id)
-                  mutate('http://localhost:3000/users')
-                }}
+                onClick={goToDetailFn.bind(user)}
                 className="float-right mr-1"
               >Edit</button>
             </li>
@@ -43,5 +51,5 @@ export default function ListPage() {
         })}
       </ol>
     </div>
-  )
+  );
 }
