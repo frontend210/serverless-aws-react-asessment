@@ -44,8 +44,13 @@
 
 li {
   text-align: left;
+  margin-bottom: .4rem;
 }
 
 .float-right {
   float: right;
+}
+
+.mr-1 {
+ margin-right: 8px;
 }

@@ -49,7 +49,6 @@ export async function createUser(id = null, firstName, lastName, email) {
   return res.json()
 }
 
-
 export async function deleteUser(id) {
   const options = {
     method: 'DELETE',
