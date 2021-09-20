@@ -2,10 +2,19 @@ const AWS = require("aws-sdk");
 const express = require("express");
 const serverless = require("serverless-http");
 
+const AWSMock = require('aws-sdk-mock');
+
 const app = express();
 
 const USERS_TABLE = process.env.USERS_TABLE;
-const dynamoDbClient = new AWS.DynamoDB.DocumentClient();
+
+const dynamoDbClientParams = {};
+// process.env.IS_OFFLINE is set by serverless-offline plugin
+if (process.env.IS_OFFLINE) {
+  dynamoDbClientParams.region = 'localhost'
+  dynamoDbClientParams.endpoint = 'http://localhost:8000'
+}
+const dynamoDbClient = new AWS.DynamoDB.DocumentClient(dynamoDbClientParams);
 
 app.use(express.json());
 
@@ -18,7 +27,7 @@ app.get("/users/:userId", async function (req, res) {
   };
 
   try {
-    const { Item } = await dynamoDbClient.get(params).promise();
+    const { Item } = await dynamoDbClient.scan(params).promise();
     if (Item) {
       const { userId, name } = Item;
       res.json({ userId, name });
