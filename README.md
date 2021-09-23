@@ -44,3 +44,23 @@ going into production - then push your changes to the master branch.
 All the best,
 
 The CodeSubmit Team
+
+
+### How to run project
+1. Install **Serverless** framework on your machine
+2. On a terminal, go to backend directory - _myvohh-dynamo-assessment_
+
+    `cd myvohh-dynamo-assessment`
+2. start **DynamoDB** locally
+
+    `sls dynamodb start --migrate`
+3. On the second terminal, in the same directory, start **Serverless Offline**
+plugin to lunch the lambda function server locally, it will be running on port 3000.
+
+    `sls offline`
+4. On the third terminal, go to frontend directory - frontend
+
+    `cd frontend`
+5. start frontend.
+
+    `npm run start`
